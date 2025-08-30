@@ -19,8 +19,8 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ caption, imageUrl, locale: "ar" })
       });
-      const data = await res.json();
-      setResult(data);
+        const data = await res.json();
+        setResult(data);
     } catch (e:any) {
       setError(e?.message || "خطأ غير معروف");
     } finally {
