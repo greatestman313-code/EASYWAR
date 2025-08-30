@@ -1,29 +1,12 @@
+# EASYWAR Ultra v4
+- Cairo font (16px), RTL
+- 3 columns: left (chats), center (chat), right (Business/Marketing tools)
+- Deep/Auto/Fast thinking + glow line while thinking
+- Emoji reactions row like ChatGPT (👍 👎 📋 🔄 ↗️)
+- Markdown + code highlight
+- Image generation placeholder (set OPENAI_API_KEY later)
+- Research API returning trusted sources (HBR, McKinsey, BCG, OECD, World Bank, Think with Google, Meta for Business, HubSpot, Nielsen)
 
-# EASYWAR Next.js + Supabase + OpenAI (App Router, TypeScript)
-
-- ✔ App Router + TypeScript
-- ✔ next.config.mjs (Vercel-compatible)
-- ✔ Supabase SSR (createServerClient) – ثابت بدون أخطاء Types
-- ✔ OpenAI integration (chat completions)
-- ✔ واجهة اختبار + مسارات API
-
-## تشغيل
-```bash
-npm i
-cp .env.example .env.local
+## Run
+npm install
 npm run dev
-```
-ثم افتح http://localhost:3000
-
-## متغيرات البيئة
-انسخ القيم في `.env.local` وأضفها في Vercel:
-```
-OPENAI_API_KEY=sk-...
-NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.ref.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOi...
-```
-
-## مسارات API
-- `POST /api/ai/rate-post` → {score, positives, negatives, is_ad, notes}
-- `GET /api/db/profile` → مثال قراءة من جدول `profiles`
-- `GET /api/health` → فحص صحي
