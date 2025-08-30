@@ -6,19 +6,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  try {
-    const supabase = createSupabaseServer();
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .limit(1)
-      .maybeSingle();
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-    return NextResponse.json({ profile: data ?? null });
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message || "Unknown error" }, { status: 500 });
-  }
+  const supabase = createSupabaseServer();
+  const { data, error } = await supabase.from("profiles").select("*").limit(1).maybeSingle();
+  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  return NextResponse.json({ profile: data ?? null });
 }
