@@ -1,0 +1,31 @@
+From 1234567890 Mon Sep 17 00:00:00 2001
+From: EasyWar Bot <bot@easywar.local>
+Date: Sat, 30 Aug 2025 15:00:00 +0300
+Subject: fix: replace next.config.ts with next.config.mjs for Vercel
+
+--- a/next.config.ts
++++ /dev/null
+@@ -1,9 +0,0 @@
+-import type { NextConfig } from "next";
+-
+-const nextConfig: NextConfig = {
+-  reactStrictMode: true,
+-  images: {
+-    remotePatterns: [{ protocol: "https", hostname: "**" }]
+-  }
+-};
+-
+-export default nextConfig;
+--- /dev/null
++++ b/next.config.mjs
+@@ -0,0 +1,10 @@
++/** @type {import('next').NextConfig} */
++const nextConfig = {
++  reactStrictMode: true,
++  images: {
++    remotePatterns: [{ protocol: "https", hostname: "**" }]
++  }
++};
++
++export default nextConfig;
++
