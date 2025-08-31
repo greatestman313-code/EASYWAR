@@ -1,6 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-:root { color-scheme: dark }
-html { direction: rtl }
-body { @apply bg-neutral-900 text-white }
