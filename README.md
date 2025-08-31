@@ -14,3 +14,7 @@
 ## النشر على Vercel
 أضف المتغيرات: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `OPENAI_API_KEY` (واختياريًا `SUPABASE_SERVICE_ROLE`).
 ثم أعد النشر.
+
+
+## Env Check
+أضفنا مسار فحص البيئة على `/api/env-check` ليتأكد أن المتغيرات مضبوطة بدون كشف القيم.
