@@ -1,22 +1,17 @@
-# Chat Easy War — Skeleton (Next.js + Tailwind + Supabase + OpenAI)
+# Chat Easy War — Functional MVP
+ميزات عملية:
+- تسجيل الدخول عبر البريد (Magic Link) و Google (Supabase Auth).
+- حماية مسار /chat عبر middleware.
+- إنشاء محادثات (Threads) وحفظ الرسائل (Messages) في Supabase مع RLS.
+- بثّ حي من OpenAI في /api/chat وواجهة تلتقط البث.
+- قائمة المحادثات في الشريط الجانبي + التنقل بينها.
+- بنية جاهزة لتوسيع الأدوات والخصائص.
 
-Implements the v1.3 spec (MVP-ready).
+## تشغيل
+1) أنشئ مشروع Supabase، وفعل Google OAuth (اختياري).
+2) انسخ `.env.example` إلى `.env.local` واملأ القيم.
+3) نفّذ سكربت `supabase/schema.sql` في SQL Editor.
+4) `npm i` ثم `npm run dev`.
+5) افتح `/login` وسجّل دخولك، ثم اذهب إلى `/chat`.
 
-## Quickstart
-1) Copy `.env.example` → `.env.local` and fill values.
-2) Install deps: `npm i` (or `pnpm i` / `yarn`).
-3) Dev: `npm run dev`.
-4) Deploy to Vercel and add envs.
-
-## Tech
-- Next.js App Router (Edge for some API routes)
-- TailwindCSS + Cairo font (via next/font)
-- Supabase (Auth/DB/Storage) + RLS-ready
-- Upstash Redis (rate-limit + caching)
-- OpenAI (stubbed; plug your key)
-- SSE streaming demo for chat
-- i18n hooks (scaffold)
-- Basic pages: login, chat, settings, help
-- API routes: /api/founder, /api/pricing, /api/ads, /api/billing, /api/integrations
-
-> NOTE: This is a professional skeleton with stubs and TODOs that you can expand.
+> ملاحظة: حتى تعمل CRUD عبر مسارات الخادم استخدم متغير `SUPABASE_SERVICE_ROLE` (لا تضعه في public)، أو استبدلها بعمل CRUD من المتصفح مع RLS مباشرة.
