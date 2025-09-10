@@ -14,3 +14,7 @@
 npm install
 npm run dev
 ```
+
+
+## Tailwind
+Tailwind/PostCSS are preconfigured. No extra steps needed on Vercel.
