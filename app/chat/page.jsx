@@ -71,6 +71,13 @@ export default function ChatPage() {
   });
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState([]); // {kind:'image'|'audio', url, name, size}
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [imgModal, setImgModal] = useState(false);
+  const [adModal, setAdModal] = useState(false);
+  const [genPrompt, setGenPrompt] = useState('');
+  const [genSize, setGenSize] = useState('1024x1024');
+  const [withAdImage, setWithAdImage] = useState(true);
+  const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState('');
   const [recOn, setRecOn] = useState(false);
   const [recLen, setRecLen] = useState(0);
@@ -229,7 +236,7 @@ export default function ChatPage() {
         <header className="p-2 border-b border-[#333] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="font-bold">CHAT EASY WAR</div>
-            <div className="text-xs text-gray-400">v0.7</div>
+            <div className="text-xs text-gray-400">v1.0</div>
             <div className="relative">
               <select className="bg-bgdark border border-[#333] rounded p-1 text-xs">
                 <option>الشات التلقائي</option>
@@ -293,6 +300,13 @@ export default function ChatPage() {
 
               <div className="absolute right-2 top-2 flex gap-2">
                 <IconBtn title="إضافة ملفات" onClick={()=>fileRef.current?.click()}><SvgPlus /></IconBtn>
+                <button onClick={()=>setMenuOpen(v=>!v)} className="px-2 py-1 rounded hover:bg-bgdark" title="قائمة">⋯</button>
+                {menuOpen && (
+                  <div className="absolute z-20 right-0 mt-8 w-56 bg-bgdark border border-[#333] rounded p-1">
+                    <button onClick={()=>{setMenuOpen(false); setImgModal(true);}} className="w-full text-right p-2 rounded hover:bg-bgsoft">توليد صورة من نص</button>
+                    <button onClick={()=>{setMenuOpen(false); setAdModal(true);}} className="w-full text-right p-2 rounded hover:bg-bgsoft">توليد إعلان من نص</button>
+                  </div>
+                )}
               </div>
 
               {/* Selected attachments preview */}
@@ -334,6 +348,84 @@ export default function ChatPage() {
               {toast}
             </div>
           )}
+        {/* Modals */}
+{imgModal && (
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-30">
+    <div className="bg-bgsoft border border-[#333] rounded p-4 w-[520px] max-w-[92vw] space-y-3">
+      <div className="text-lg font-bold">توليد صورة من نص</div>
+      <textarea value={genPrompt} onChange={e=>setGenPrompt(e.target.value)} className="w-full h-28 bg-bgdark rounded p-2 outline-none" placeholder="اكتب وصف الصورة المطلوبة..." />
+      <div className="flex items-center gap-2">
+        <label className="text-sm text-gray-300">الحجم:</label>
+        <select value={genSize} onChange={e=>setGenSize(e.target.value)} className="bg-bgdark border border-[#333] rounded p-1 text-sm">
+          <option>512x512</option>
+          <option>768x768</option>
+          <option>1024x1024</option>
+        </select>
+        {busy && <span className="text-sm text-neon">...جارِ التوليد</span>}
+      </div>
+      <div className="flex justify-end gap-2">
+        <button onClick={()=>setImgModal(false)} className="px-3 py-1 rounded hover:bg-bgdark">إغلاق</button>
+        <button onClick={async ()=>{
+          if(!genPrompt.trim()) return;
+          setBusy(true);
+          try {
+            const res = await fetch('/api/gen/image', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ prompt: genPrompt, size: genSize }) });
+            const data = await res.json();
+            if (data?.url) {
+              const msg = { id: uid(), role:'assistant', type:'text', content: 'نتيجة توليد الصورة:', vote:null, saved:false, attachments: [{kind:'image', url: data.url, name:'generated.png', size:0}] };
+              setMessages(m=>[...m, msg]);
+              setImgModal(false); setGenPrompt('');
+            } else {
+              setToast('فشل التوليد'); 
+            }
+          } catch (e) {
+            setToast('خطأ في التوليد');
+          } finally {
+            setBusy(false);
+          }
+        }} className="px-3 py-1 rounded bg-neon text-black">توليد</button>
+      </div>
+    </div>
+  </div>
+)}
+
+{adModal && (
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-30">
+    <div className="bg-bgsoft border border-[#333] rounded p-4 w-[560px] max-w-[92vw] space-y-3">
+      <div className="text-lg font-bold">توليد إعلان من نص</div>
+      <textarea value={genPrompt} onChange={e=>setGenPrompt(e.target.value)} className="w-full h-28 bg-bgdark rounded p-2 outline-none" placeholder="صف المنتج/العرض والجمهور..." />
+      <div className="flex items-center gap-3">
+        <label className="text-sm text-gray-300"><input type="checkbox" checked={withAdImage} onChange={e=>setWithAdImage(e.target.checked)} className="ml-2"/> توليد صورة للإعلان</label>
+        {busy && <span className="text-sm text-neon">...جارِ التوليد</span>}
+      </div>
+      <div className="flex justify-end gap-2">
+        <button onClick={()=>setAdModal(false)} className="px-3 py-1 rounded hover:bg-bgdark">إغلاق</button>
+        <button onClick={async ()=>{
+          if(!genPrompt.trim()) return;
+          setBusy(true);
+          try {
+            const res = await fetch('/api/gen/ad', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ prompt: genPrompt, withImage: withAdImage }) });
+            const data = await res.json();
+            if (data?.ad) {
+              let content = `العنوان: ${data.ad.headline || ''}\nالنص: ${data.ad.body || ''}\nCTA: ${data.ad.cta || ''}`.trim();
+              const attach = data.imageUrl ? [{kind:'image', url: data.imageUrl, name:'ad.png', size:0}] : [];
+              const msg = { id: uid(), role:'assistant', type:'text', content, vote:null, saved:false, attachments: attach };
+              setMessages(m=>[...m, msg]);
+              setAdModal(false); setGenPrompt('');
+            } else {
+              setToast('فشل توليد الإعلان');
+            }
+          } catch (e) {
+            setToast('خطأ في توليد الإعلان');
+          } finally {
+            setBusy(false);
+          }
+        }} className="px-3 py-1 rounded bg-neon text-black">توليد</button>
+      </div>
+    </div>
+  </div>
+)}
+
         </footer>
       </main>
     </div>
