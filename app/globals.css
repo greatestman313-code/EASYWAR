@@ -1,0 +1,11 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { direction: rtl; }
+body { @apply bg-dark text-white font-cairo; }
+.scroll-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+.btn-neon { @apply bg-neon/20 hover:bg-neon/30 text-neon px-3 py-2 rounded-xl transition; }
+.card { @apply bg-slate-900/60 border border-slate-700/40 rounded-2xl p-4; }
